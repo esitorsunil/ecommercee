@@ -1,45 +1,96 @@
-import { createContext, useContext, useReducer } from 'react';
+import { createContext, useReducer, useEffect, useContext } from 'react';
 
-const AuthContext = createContext();
-
+// Initial auth state
 const initialState = {
-  rememberMe: false,
-  showPassword: false,
-  isAuthenticated: JSON.parse(localStorage.getItem('isAuthenticated')) || false,
+  authToken: null,
+  user: null,
+  isLoading: true,
 };
+
+// Reducer function
 const authReducer = (state, action) => {
   switch (action.type) {
-    case 'TOGGLE_REMEMBER_ME':
-      return { ...state, rememberMe: action.payload };
-    case 'TOGGLE_SHOW_PASSWORD':
-      return { ...state, showPassword: !state.showPassword };
     case 'LOGIN':
-      if (state.rememberMe) {
-        localStorage.setItem('isAuthenticated', true);
-      }
-      return { ...state, isAuthenticated: true };
+      return {
+        ...state,
+        authToken: action.payload.token,
+        user: action.payload.user,
+        isLoading: false,
+      };
     case 'LOGOUT':
-      localStorage.removeItem('isAuthenticated');
-      return { ...state, isAuthenticated: false };
+      return {
+        ...state,
+        authToken: null,
+        user: null,
+        isLoading: false,
+      };
+    case 'LOAD_USER':
+      return {
+        ...state,
+        authToken: action.payload.token,
+        user: action.payload.user,
+        isLoading: false,
+      };
+    case 'FINISH_LOADING':
+      return {
+        ...state,
+        isLoading: false,
+      };
     default:
       return state;
   }
 };
 
+const AuthContext = createContext();
+
 export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
 
-  const value = {
-  rememberMe: state.rememberMe,
-  showPassword: state.showPassword,
-  isAuthenticated: state.isAuthenticated,
-  setRememberMe: (value) => dispatch({ type: 'TOGGLE_REMEMBER_ME', payload: value }),
-  setShowPassword: () => dispatch({ type: 'TOGGLE_SHOW_PASSWORD' }),
-  login: () => dispatch({ type: 'LOGIN' }),
-  logout: () => dispatch({ type: 'LOGOUT' }),
-};
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    const userData = localStorage.getItem('user');
+    if (token && userData) {
+      dispatch({
+        type: 'LOAD_USER',
+        payload: {
+          token,
+          user: JSON.parse(userData),
+        },
+      });
+    } else {
+      dispatch({ type: 'FINISH_LOADING' });
+    }
+  }, []);
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  const login = (token, user) => {
+    localStorage.setItem('authToken', token);
+    localStorage.setItem('user', JSON.stringify(user));
+    dispatch({
+      type: 'LOGIN',
+      payload: { token, user },
+    });
+  };
+
+  const logout = () => {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('user');
+    dispatch({ type: 'LOGOUT' });
+  };
+
+  return (
+    <AuthContext.Provider
+      value={{
+        authToken: state.authToken,
+        user: state.user,
+        login,
+        logout,
+        isAuthenticated: !!state.authToken,
+        isLoading: state.isLoading,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 export const useAuth = () => useContext(AuthContext);

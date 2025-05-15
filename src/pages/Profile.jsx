@@ -1,30 +1,56 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useAuth } from '../context/AuthContext'; // your context path
+import { useAuth } from '../context/AuthContext';
 
 const PROFILE_STORAGE_KEY = 'userProfile';
 
 const Profile = () => {
-  const { register, handleSubmit, reset, formState: { errors } } = useForm();
+  const { register, handleSubmit, reset, setValue, getValues, formState: { errors } } = useForm();
   const { isAuthenticated } = useAuth();
+  const [editMode, setEditMode] = useState(false);
+  const toastRef = useRef();
 
   useEffect(() => {
     const savedProfile = localStorage.getItem(PROFILE_STORAGE_KEY);
     if (savedProfile) {
-      reset(JSON.parse(savedProfile));
+      const profileData = JSON.parse(savedProfile);
+      reset(profileData);
     }
   }, [reset]);
 
+  const showToast = () => {
+    const toast = new window.bootstrap.Toast(toastRef.current);
+    toast.show();
+  };
+
   const onSubmit = (data) => {
     localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(data));
-    alert('Profile saved successfully!');
+    showToast();
+    setEditMode(false);
+  };
+
+  const handleEditToggle = () => {
+    if (editMode) {
+      const savedProfile = localStorage.getItem(PROFILE_STORAGE_KEY);
+      if (savedProfile) {
+        reset(JSON.parse(savedProfile));
+      }
+    }
+    setEditMode(!editMode);
   };
 
   return (
     <div className="container py-5">
       <div className="d-flex justify-content-center">
         <div className="bg-white shadow-lg rounded p-4 w-100" style={{ maxWidth: '600px' }}>
-          <h2 className="mb-4 text-center">Personal Information</h2>
+          <div className="d-flex justify-content-between align-items-center mb-3">
+            <h2 className="mb-0">Personal Information</h2>
+            {isAuthenticated && (
+              <button className="btn btn-primary" type="button" onClick={handleEditToggle}>
+                {editMode ? 'Cancel' : 'Edit'}
+              </button>
+            )}
+          </div>
 
           {!isAuthenticated && (
             <div className="alert alert-warning">
@@ -37,9 +63,9 @@ const Profile = () => {
               <label htmlFor="firstName" className="form-label">First Name</label>
               <input
                 id="firstName"
-                className={`form-control ${errors.firstName ? 'is-invalid' : ''}`}
+                className={`form-control ${editMode && errors.firstName ? 'is-invalid' : ''}`}
                 {...register('firstName', { required: 'First name is required' })}
-                disabled={!isAuthenticated}
+                disabled={!editMode}
               />
               {errors.firstName && (
                 <div className="invalid-feedback">{errors.firstName.message}</div>
@@ -52,7 +78,7 @@ const Profile = () => {
                 id="lastName"
                 className={`form-control ${errors.lastName ? 'is-invalid' : ''}`}
                 {...register('lastName', { required: 'Last name is required' })}
-                disabled={!isAuthenticated}
+                disabled={!editMode}
               />
               {errors.lastName && (
                 <div className="invalid-feedback">{errors.lastName.message}</div>
@@ -65,7 +91,7 @@ const Profile = () => {
                 id="gender"
                 className={`form-select ${errors.gender ? 'is-invalid' : ''}`}
                 {...register('gender', { required: 'Please select your gender' })}
-                disabled={!isAuthenticated}
+                disabled={!editMode}
               >
                 <option value="">Choose...</option>
                 <option value="male">Male</option>
@@ -92,7 +118,7 @@ const Profile = () => {
                   },
                 })}
                 placeholder="Enter 10-digit number"
-                disabled={!isAuthenticated}
+                disabled={!editMode}
               />
               {errors.mobile && (
                 <div className="invalid-feedback">{errors.mobile.message}</div>
@@ -100,13 +126,11 @@ const Profile = () => {
               <div className="form-text">Enter your 10-digit mobile number.</div>
             </div>
 
-            <button
-              type="submit"
-              className="btn btn-primary w-100"
-              disabled={!isAuthenticated}
-            >
-              Save
-            </button>
+            {editMode && (
+              <button type="submit" className="btn btn-primary w-100">
+                Save
+              </button>
+            )}
           </form>
 
           {/* FAQ Section */}
@@ -174,6 +198,37 @@ const Profile = () => {
             />
           </div>
         </div>
+      </div>
+
+      {/* Bootstrap Toast */}
+      <div
+  className="position-fixed"
+  style={{
+    top: '80px',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    zIndex: 9999,
+  }}
+>
+  <div
+    ref={toastRef}
+    className="toast align-items-center text-bg-success border-0"
+    role="alert"
+    aria-live="assertive"
+    aria-atomic="true"
+  >
+    <div className="d-flex">
+      <div className="toast-body">
+        Profile saved successfully!
+      </div>
+      <button
+        type="button"
+        className="btn-close btn-close-white me-2 m-auto"
+        data-bs-dismiss="toast"
+        aria-label="Close"
+      ></button>
+    </div>
+  </div>
       </div>
     </div>
   );

@@ -14,24 +14,28 @@ const Login = () => {
   } = useForm({ mode: 'onChange' });
 
   const onSubmit = (data) => {
-    const user = users.find(
-      (u) => u.email === data.email && u.password === data.password
-      
-    );
+  const user = users.find(
+    (u) => u.email === data.email && u.password === data.password
+  );
 
-    if (user) {
-      const toastEl = document.getElementById('loginToast');
+  if (user) {
+    // Mock token (replace with real token if you have one)
+    const token = 'mock_token';
+
+    login(token, { email: user.email });  // <-- Save to context & localStorage
+
+    // Show toast if exists
+    const toastEl = document.getElementById('loginToast');
     if (toastEl) {
       const toast = new bootstrap.Toast(toastEl);
       toast.show();
     }
-      login();
-      navigate('/');
-    } else {
-      alert('Invalid email or password');
-    }
-  };
 
+    navigate('/');
+  } else {
+    alert('Invalid email or password');
+  }
+};
   return (
     <div className="container-fluid min-vh-100 d-flex align-items-center justify-content-center bg-light">
       <div className="row shadow rounded overflow-hidden bg-white" style={{ maxWidth: '900px', width: '100%' }}>
