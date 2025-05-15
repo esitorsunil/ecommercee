@@ -1,13 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '../context/AuthContext';
+import { useEditMode } from '../context/EditModeContext'; // Add this import
 
 const PROFILE_STORAGE_KEY = 'userProfile';
 
 const Profile = () => {
-  const { register, handleSubmit, reset, setValue, getValues, formState: { errors } } = useForm();
+  const { register, handleSubmit, reset, formState: { errors } } = useForm();
   const { isAuthenticated } = useAuth();
-  const [editMode, setEditMode] = useState(false);
+  const { editMode, toggleEditMode, resetEditMode } = useEditMode();  // Using your edit mode hook
   const toastRef = useRef();
 
   useEffect(() => {
@@ -26,7 +27,7 @@ const Profile = () => {
   const onSubmit = (data) => {
     localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(data));
     showToast();
-    setEditMode(false);
+    resetEditMode();
   };
 
   const handleEditToggle = () => {
@@ -36,7 +37,7 @@ const Profile = () => {
         reset(JSON.parse(savedProfile));
       }
     }
-    setEditMode(!editMode);
+    toggleEditMode();
   };
 
   return (
@@ -133,7 +134,6 @@ const Profile = () => {
             )}
           </form>
 
-          {/* FAQ Section */}
           <section className="mt-5">
             <h3>Frequently Asked Questions</h3>
             <div className="accordion" id="faqAccordion">
@@ -188,7 +188,6 @@ const Profile = () => {
             </div>
           </section>
 
-          {/* Footer Image */}
           <div className="text-center mt-5">
             <img
               src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/myProfileFooter_4e9fe2.png"
@@ -199,36 +198,34 @@ const Profile = () => {
           </div>
         </div>
       </div>
-
-      {/* Bootstrap Toast */}
       <div
-  className="position-fixed"
-  style={{
-    top: '80px',
-    left: '50%',
-    transform: 'translateX(-50%)',
-    zIndex: 9999,
-  }}
->
-  <div
-    ref={toastRef}
-    className="toast align-items-center text-bg-success border-0"
-    role="alert"
-    aria-live="assertive"
-    aria-atomic="true"
-  >
-    <div className="d-flex">
-      <div className="toast-body">
-        Profile saved successfully!
-      </div>
-      <button
-        type="button"
-        className="btn-close btn-close-white me-2 m-auto"
-        data-bs-dismiss="toast"
-        aria-label="Close"
-      ></button>
-    </div>
-  </div>
+        className="position-fixed"
+        style={{
+          top: '80px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: 9999,
+        }}
+      >
+        <div
+          ref={toastRef}
+          className="toast align-items-center text-bg-success border-0"
+          role="alert"
+          aria-live="assertive"
+          aria-atomic="true"
+        >
+          <div className="d-flex">
+            <div className="toast-body">
+              Profile saved successfully!
+            </div>
+            <button
+              type="button"
+              className="btn-close btn-close-white me-2 m-auto"
+              data-bs-dismiss="toast"
+              aria-label="Close"
+            ></button>
+          </div>
+        </div>
       </div>
     </div>
   );

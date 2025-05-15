@@ -1,15 +1,12 @@
-import React from 'react';
 import { 
   BiBullseye, 
   BiShieldAlt, 
   BiRocket, 
   BiCheckShield,
-  BiCartAlt,
   BiLeaf,
   BiStar,
   BiLockAlt,
   BiHappyHeartEyes,
-  BiGroup,
   BiPackage,
   BiRefresh,
   BiHeadphone
@@ -19,15 +16,11 @@ const AboutUs = () => {
   return (
     <div className="bg-white text-dark min-vh-100 py-5">
       <div className="container">
-        <div className="bg-white shadow-lg rounded p-4 w-100" style={{ maxWidth: '2000px' }}>
-        {/* Header */}
-        <header className="text-center mb-5">
-          
+
+        <header className="text-center mb-5">     
           <p className="lead">Your trusted shopping companion since 2018</p>
         </header>
 
-        {/* Mission Section */}
-       {/* Mission Section */}
 <section className="row align-items-center mb-5 py-5">
   <div className="col-lg-6 mb-4 mb-lg-0">
     <div className="position-relative overflow-hidden rounded-4" style={{ height: '400px', boxShadow: '0 10px 30px rgba(0,0,0,0.08)' }}>
@@ -91,14 +84,12 @@ const AboutUs = () => {
   </div>
 </section>
 
-        {/* Why Choose Us */}
         <section className="py-5">
           <h2 className="text-center fw-bold mb-5 display-6">
             Why Choose <span className="text-primary">ShopCart</span>?
           </h2>
           
           <div className="row g-4">
-            {/* Card 1 - Fast Delivery */}
             <div className="col-md-4">
               <div className="card h-100 border-0 shadow">
                 <div className="card-body p-4">
@@ -123,7 +114,6 @@ const AboutUs = () => {
               </div>
             </div>
 
-            {/* Card 2 - Secure Payments */}
             <div className="col-md-4">
               <div className="card h-100 border-0 shadow-sm">
                 <div className="card-body p-4">
@@ -145,7 +135,6 @@ const AboutUs = () => {
               </div>
             </div>
 
-            {/* Card 3 - Easy Returns */}
             <div className="col-md-4">
               <div className="card h-100 border-0 shadow-sm">
                 <div className="card-body p-4">
@@ -168,15 +157,14 @@ const AboutUs = () => {
           </div>
         </section>
 
-        {/* Features Section */}
-        <section className="py-5 mt-4 border-top">
-          <div className="row text-center g-4">
-            <div className="col-md-3">
+        <section className="py-5 mt-4 border-top ">
+          <div className="row text-center g-4 ">
+            <div className="col-md-3 ">
               <BiPackage className="display-4 text-primary mb-3" />
               <h3 className="fw-bold">10M+</h3>
               <p>Products Available</p>
             </div>
-            <div className="col-md-3">
+            <div className="col-md-3 ">
               <BiHeadphone className="display-4 text-primary mb-3" />
               <h3 className="fw-bold">24/7</h3>
               <p>Customer Support</p>
@@ -194,7 +182,6 @@ const AboutUs = () => {
           </div>
         </section>
       </div>
-    </div>
     </div>
   );
 };

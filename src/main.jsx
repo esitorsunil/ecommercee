@@ -4,13 +4,13 @@ import App from './App';
 import { BrowserRouter } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import { AuthProvider } from './context/AuthContext';
+import CombinedProviders from './context/CombineProviders';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <AuthProvider>
+  <CombinedProviders>
   <BrowserRouter>
     <App />
   </BrowserRouter>
-  </AuthProvider>
+  </CombinedProviders>
 );

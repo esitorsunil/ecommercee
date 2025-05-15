@@ -19,12 +19,10 @@ const Login = () => {
   );
 
   if (user) {
-    // Mock token (replace with real token if you have one)
     const token = 'mock_token';
 
-    login(token, { email: user.email });  // <-- Save to context & localStorage
+    login(token, { email: user.email });
 
-    // Show toast if exists
     const toastEl = document.getElementById('loginToast');
     if (toastEl) {
       const toast = new bootstrap.Toast(toastEl);
