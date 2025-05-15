@@ -9,6 +9,7 @@ import Login from './pages/Login';
 import Profile from './pages/Profile';
 import ProtectedRoute from './components/ProtectedRoute';
 import './index.css';
+import Product from './pages/Product';
 
 const App = () => {
   return (
@@ -26,6 +27,7 @@ const App = () => {
               </ProtectedRoute>
             }
           />
+          <Route path="/product/:id" element={<Product />} />
           <Route path="/collection" element={<Collection />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
