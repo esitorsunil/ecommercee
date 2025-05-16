@@ -10,6 +10,7 @@ import Profile from './pages/Profile';
 import ProtectedRoute from './components/ProtectedRoute';
 import './index.css';
 import Product from './pages/Product';
+import CategoryPage from './pages/CategoriesPage';
 
 const App = () => {
   return (
@@ -28,6 +29,7 @@ const App = () => {
             }
           />
           <Route path="/product/:id" element={<Product />} />
+          <Route path="/category/:categoryName" element={<CategoryPage />} />
           <Route path="/collection" element={<Collection />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
