@@ -3,17 +3,17 @@ import { EditModeProvider } from './EditModeContext';
 import { ProductProvider } from './ProductContext';
 import { SearchProvider } from './SearchContext';
 
+const providers = [
+  AuthProvider,
+  SearchProvider,
+  ProductProvider,
+  EditModeProvider,
+];
+
 const CombinedProviders = ({ children }) => {
-  return (
-    <AuthProvider>
-      <SearchProvider>
-      <ProductProvider>
-      <EditModeProvider>
-        {children}
-      </EditModeProvider>
-      </ProductProvider>
-      </SearchProvider>
-    </AuthProvider>
+  return providers.reduceRight(
+    (acc, Provider) => <Provider>{acc}</Provider>,
+    children
   );
 };
 

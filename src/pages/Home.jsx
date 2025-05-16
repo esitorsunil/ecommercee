@@ -42,7 +42,6 @@ const Home = () => {
 
   return (
     <>
-      {/* Hero Banner */}
       <div
         style={{
           position: 'relative',
@@ -85,7 +84,6 @@ const Home = () => {
       </div>
 
       <div className="container py-3">
-        {/* Features */}
         <div className="container-fluid bg-light py-2 shadow-sm mb-5">
           <div className="row text-center">
             <div className="col-md-4 mb-2 mb-md-0">
@@ -109,11 +107,9 @@ const Home = () => {
           </div>
         </div>
 
-        {/* Categories */}
         <ProductCategories />
 
-        {/* Latest Products */}
-        <section className="mb-5">
+        <section className="mb-5 mt-5">
           <h2 className="mb-3">Latest Collection</h2>
           <div className="row g-3">
             {latestProducts.map(product => (
@@ -122,8 +118,7 @@ const Home = () => {
           </div>
         </section>
 
-        {/* Best Sellers */}
-        <section className="mb-5">
+        <section className="mb-5 mt-5">
           <h2 className="mb-3">Best Sellers</h2>
           <div className="row g-3">
             {bestSellers.map(product => (
@@ -132,7 +127,6 @@ const Home = () => {
           </div>
         </section>
 
-        {/* Products For You */}
         <ProductsForYou />
       </div>
     </>

@@ -1,5 +1,5 @@
 
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import ProductContext from '../context/ProductContext';
 import { useNavigate } from 'react-router-dom';
 

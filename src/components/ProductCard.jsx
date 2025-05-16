@@ -1,4 +1,3 @@
-// src/components/ProductCard.jsx
 import { useNavigate } from 'react-router-dom';
 
 const ProductCard = ({ product, refProp = null }) => {

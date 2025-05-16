@@ -60,7 +60,6 @@ const Header = () => {
           </div>
 
           <div className="d-flex align-items-center gap-4">
-            {/* 🔍 Search Box */}
       <div className="position-relative" style={{ width: '300px' }}>
               <i
                 className="bi bi-search position-absolute text-muted"
@@ -103,7 +102,6 @@ const Header = () => {
               )}
             </div>
 
-            {/* 👤 Profile Dropdown */}
             <div className="dropdown">
               <button
                 className="btn btn-link text-black p-0 dropdown-toggle"
@@ -138,7 +136,6 @@ const Header = () => {
               </ul>
             </div>
 
-            {/* 🛒 Cart Icon */}
             <button className="btn btn-link text-black p-0 position-relative">
               <i className="bi bi-cart fs-4"></i>
               <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
@@ -149,7 +146,6 @@ const Header = () => {
         </div>
       </nav>
 
-      {/* 🔐 Logout Confirmation Modal */}
       <div
         className="modal fade"
         id="logoutModal"
@@ -190,7 +186,6 @@ const Header = () => {
         </div>
       </div>
 
-      {/* ✅ Login Toast Notification (optional) */}
       <div
         className="position-fixed top-0 start-50 translate-middle-x p-3"
         style={{ zIndex: 1080 }}

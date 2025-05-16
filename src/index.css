@@ -2,3 +2,11 @@
 .card {
   border-radius: 1rem;
 }
+.category-card {
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.category-card:hover {
+  transform: translateY(-8px);
+}

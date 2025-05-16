@@ -1,13 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import ProductContext from '../context/ProductContext';
 import ProductsForYou from './ProductYou';
 
 const Product = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-
-  const [product, setProduct] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { state, dispatch } = useContext(ProductContext);
+  const { selectedProduct } = state;
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -15,21 +15,23 @@ const Product = () => {
         const res = await fetch(`https://dummyjson.com/products/${id}`);
         if (!res.ok) throw new Error('Product not found');
         const data = await res.json();
-        setProduct(data);
+        dispatch({ type: 'SET_SELECTED_PRODUCT', payload: data });
       } catch (error) {
         console.error(error);
         alert('Failed to fetch product details.');
         navigate('/');
-      } finally {
-        setLoading(false);
       }
     };
     fetchProduct();
-  }, [id, navigate]);
 
-  if (loading) return <div className="container py-5">Loading product...</div>;
+    return () => {
+      dispatch({ type: 'CLEAR_SELECTED_PRODUCT' });
+    };
+  }, [id, navigate, dispatch]);
 
-  if (!product) return null;
+  if (!selectedProduct) return <div className="container py-5">Loading product...</div>;
+
+  const product = selectedProduct;
 
   return (
     <div className="container py-5">
@@ -66,7 +68,7 @@ const Product = () => {
         </div>
       </div>
       <div className="mt-5">
-      <ProductsForYou/>
+        <ProductsForYou />
       </div>
     </div>
   );

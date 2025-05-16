@@ -39,10 +39,9 @@ const ProductCategories = () => {
   return (
     <div className="row g-2 mb-5">
       {categories.map((item, index) => (
-        <div className="col-6 col-md-2" key={index}>
+        <div className="col-6 col-md-2" key={item.realCategory}>
           <div
-            className="text-center"
-            style={{ cursor: 'pointer' }}
+            className="text-center category-card"
             onClick={() => navigate(`/category/${item.realCategory}`)}
           >
             <img
