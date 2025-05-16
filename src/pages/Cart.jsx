@@ -1,6 +1,7 @@
 import React from 'react';
 import { useCart } from '../context/CartContext';
 import { useNavigate } from 'react-router-dom';
+import StepHeader from './steps/StepHeader';
 
 const Cart = () => {
   const { cart, addToCart, removeFromCart, clearCart } = useCart();
@@ -10,6 +11,8 @@ const Cart = () => {
   const totalPrice = cart.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   return (
+    <>
+     <StepHeader currentStep={1} /> 
     <div className="container pt-5">
     
 
@@ -124,6 +127,7 @@ const Cart = () => {
         </div>
       )}
     </div>
+    </>
   );
 };
 
