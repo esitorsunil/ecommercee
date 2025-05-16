@@ -40,8 +40,13 @@ const Home = () => {
     .sort((a, b) => b.rating - a.rating)
     .slice(0, 5);
 
+  // Optional: Remove duplicates between best sellers and latest products
+  const bestSellerIds = new Set(bestSellers.map(p => p.id));
+  const latestOnly = latestProducts.filter(p => !bestSellerIds.has(p.id));
+
   return (
     <>
+      {/* Hero Banner */}
       <div
         style={{
           position: 'relative',
@@ -83,6 +88,7 @@ const Home = () => {
         </div>
       </div>
 
+      {/* Features */}
       <div className="container py-3">
         <div className="container-fluid bg-light py-2 shadow-sm mb-5">
           <div className="row text-center">
@@ -107,26 +113,45 @@ const Home = () => {
           </div>
         </div>
 
+        {/* Product Categories */}
         <ProductCategories />
 
-        <section className="mb-5 mt-5">
-          <h2 className="mb-3">Latest Collection</h2>
-          <div className="row g-3">
-            {latestProducts.map(product => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        </section>
 
+         <div className="my-5">
+          <img
+            src="https://media.powerlook.in/mycustomfolder/bottom_banner.jpg?aio=w-1200"
+            alt="Promotional Banner"
+            style={{
+              width: '100%',
+              height: 'auto',
+              display: 'block',
+              objectFit: 'cover',
+            }}
+          />
+        </div>
+
+       
+         {/* Full Width Banner */}
+       
+
+        {/* Best Sellers */}
         <section className="mb-5 mt-5">
           <h2 className="mb-3">Best Sellers</h2>
           <div className="row g-3">
-            {bestSellers.map(product => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+            {bestSellers.map(
+              product =>
+                product &&
+                product.thumbnail && (
+                  <ProductCard
+                    key={`best-${product.id}`}
+                    product={product}
+                  />
+                )
+            )}
           </div>
         </section>
 
+        {/* Infinite Scroll Section */}
         <ProductsForYou />
       </div>
     </>

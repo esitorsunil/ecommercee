@@ -1,13 +1,18 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useSearch } from '../context/SearchContext';
+import { useCart } from '../context/CartContext';
 
 const Header = () => {
- const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
 
   const { state, dispatch } = useSearch();
   const { products, query, showDropdown } = state;
+
+  const { cart } = useCart();
+
+  const totalItems = cart.items.reduce((sum, item) => sum + item.quantity, 0);
 
   const handleLogout = () => {
     logout();
@@ -48,7 +53,7 @@ const Header = () => {
                     <NavLink
                       to={path}
                       className={({ isActive }) =>
-                        `nav-link px-3 ${isActive ? 'border-bottom border-2 border-dark' : ''}`
+                        `nav-link px-3 ${isActive ? 'border-bottom border-2 border-dark ' : ''}`
                       }
                     >
                       {labels[i]}
@@ -60,7 +65,7 @@ const Header = () => {
           </div>
 
           <div className="d-flex align-items-center gap-4">
-      <div className="position-relative" style={{ width: '300px' }}>
+            <div className="position-relative" style={{ width: '300px' }}>
               <i
                 className="bi bi-search position-absolute text-muted"
                 style={{ top: '50%', left: '10px', transform: 'translateY(-50%)' }}
@@ -136,16 +141,29 @@ const Header = () => {
               </ul>
             </div>
 
-            <button className="btn btn-link text-black p-0 position-relative">
+            <button
+              className="btn btn-link text-black p-0 position-relative"
+              onClick={() => {
+                if (isAuthenticated) {
+                  navigate('/cart');
+                } else {
+                  const modal = new bootstrap.Modal(document.getElementById('loginPromptModal'));
+                  modal.show();
+                }
+              }}
+            >
               <i className="bi bi-cart fs-4"></i>
-              <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                3
-              </span>
+              {totalItems > 0 && (
+                <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                  {totalItems}
+                </span>
+              )}
             </button>
           </div>
         </div>
       </nav>
 
+      {/* Logout Confirmation Modal */}
       <div
         className="modal fade"
         id="logoutModal"
@@ -186,6 +204,54 @@ const Header = () => {
         </div>
       </div>
 
+      {/* Login Prompt Modal */}
+      <div
+        className="modal fade"
+        id="loginPromptModal"
+        tabIndex="-1"
+        aria-labelledby="loginPromptModalLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title" id="loginPromptModalLabel">Login Required</h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div className="modal-body">
+              Please log in to view your cart.
+            </div>
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={() => {
+                  const modalEl = document.getElementById('loginPromptModal');
+                  const modal = bootstrap.Modal.getInstance(modalEl);
+                  modal.hide();
+                  navigate('/login');
+                }}
+              >
+                Login
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Login Success Toast */}
       <div
         className="position-fixed top-0 start-50 translate-middle-x p-3"
         style={{ zIndex: 1080 }}

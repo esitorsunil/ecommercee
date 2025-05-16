@@ -1,9 +1,14 @@
 import { useNavigate } from 'react-router-dom';
+import { useCart } from '../context/CartContext';
 
 const ProductCard = ({ product, refProp = null }) => {
   const navigate = useNavigate();
+  const { addToCart } = useCart();  // Use addToCart directly
 
-  if (!product) return null;
+  const handleAddToCart = (e) => {
+    e.stopPropagation(); // Prevent card click
+    addToCart(product);
+  };
 
   return (
     <div
@@ -25,17 +30,17 @@ const ProductCard = ({ product, refProp = null }) => {
               ? product.title.slice(0, 50) + '...'
               : product.title}
           </h6>
-
           <div className="d-flex justify-content-between align-items-center mb-1">
             <p className="card-text fw-bold mb-0">${product.price.toFixed(2)}</p>
             <p className="text-success small mb-0">Free Delivery</p>
           </div>
-
           <p className="text-warning mb-2">
             {'★'.repeat(Math.round(product.rating || 0)).padEnd(5, '☆')}
           </p>
-
-          <button className="btn btn-outline-primary btn-sm mt-auto w-100">
+          <button
+            className="btn btn-outline-primary btn-sm mt-auto w-100"
+            onClick={handleAddToCart}
+          >
             <i className="bi bi-cart-plus me-1"></i>Add to Cart
           </button>
         </div>

@@ -1,4 +1,5 @@
 import { AuthProvider } from './AuthContext';
+import { CartProvider } from './CartContext';
 import { EditModeProvider } from './EditModeContext';
 import { ProductProvider } from './ProductContext';
 import { SearchProvider } from './SearchContext';
@@ -8,6 +9,7 @@ const providers = [
   SearchProvider,
   ProductProvider,
   EditModeProvider,
+  CartProvider
 ];
 
 const CombinedProviders = ({ children }) => {
