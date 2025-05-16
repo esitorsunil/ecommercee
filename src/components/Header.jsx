@@ -1,14 +1,22 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useSearch } from '../context/SearchContext';
 
 const Header = () => {
-  const { isAuthenticated, logout } = useAuth();
+ const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
+
+  const { state, dispatch } = useSearch();
+  const { products, query, showDropdown } = state;
 
   const handleLogout = () => {
     logout();
     navigate('/login');
   };
+
+  const filtered = products.filter((item) =>
+    item.title.toLowerCase().includes(query.toLowerCase())
+  );
 
   return (
     <>
@@ -52,10 +60,50 @@ const Header = () => {
           </div>
 
           <div className="d-flex align-items-center gap-4">
-            <button className="btn btn-link text-black p-0">
-              <i className="bi bi-search fs-4"></i>
-            </button>
+            {/* 🔍 Search Box */}
+      <div className="position-relative" style={{ width: '300px' }}>
+              <i
+                className="bi bi-search position-absolute text-muted"
+                style={{ top: '50%', left: '10px', transform: 'translateY(-50%)' }}
+              ></i>
+              <input
+                type="text"
+                className="form-control ps-5"
+                placeholder="Search products..."
+                value={query}
+                onChange={(e) => {
+                  dispatch({ type: 'SET_QUERY', payload: e.target.value });
+                  dispatch({ type: 'SET_SHOW_DROPDOWN', payload: true });
+                }}
+                onFocus={() => dispatch({ type: 'SET_SHOW_DROPDOWN', payload: true })}
+                onBlur={() => setTimeout(() => dispatch({ type: 'SET_SHOW_DROPDOWN', payload: false }), 200)}
+              />
+              {showDropdown && query && (
+                <ul
+                  className="list-group position-absolute w-100 shadow-sm mt-1"
+                  style={{ zIndex: 1050, maxHeight: '200px', overflowY: 'auto' }}
+                >
+                  {filtered.length ? (
+                    filtered.map((item) => (
+                      <li
+                        key={item.id}
+                        className="list-group-item list-group-item-action"
+                        onClick={() => {
+                          dispatch({ type: 'RESET_QUERY' });
+                          navigate(`/product/${item.id}`);
+                        }}
+                      >
+                        {item.title}
+                      </li>
+                    ))
+                  ) : (
+                    <li className="list-group-item text-muted">No results found</li>
+                  )}
+                </ul>
+              )}
+            </div>
 
+            {/* 👤 Profile Dropdown */}
             <div className="dropdown">
               <button
                 className="btn btn-link text-black p-0 dropdown-toggle"
@@ -90,6 +138,7 @@ const Header = () => {
               </ul>
             </div>
 
+            {/* 🛒 Cart Icon */}
             <button className="btn btn-link text-black p-0 position-relative">
               <i className="bi bi-cart fs-4"></i>
               <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
@@ -100,6 +149,7 @@ const Header = () => {
         </div>
       </nav>
 
+      {/* 🔐 Logout Confirmation Modal */}
       <div
         className="modal fade"
         id="logoutModal"
@@ -140,6 +190,7 @@ const Header = () => {
         </div>
       </div>
 
+      {/* ✅ Login Toast Notification (optional) */}
       <div
         className="position-fixed top-0 start-50 translate-middle-x p-3"
         style={{ zIndex: 1080 }}

@@ -1,13 +1,11 @@
 import { createContext, useReducer, useEffect, useContext } from 'react';
 
-// Initial auth state
 const initialState = {
   authToken: null,
   user: null,
   isLoading: true,
 };
 
-// Reducer function
 const authReducer = (state, action) => {
   switch (action.type) {
     case 'LOGIN':

@@ -106,7 +106,6 @@ const onSubmit = (data) => {
             </div>
           </div>
 
-          {/* Map Section */}
           <div className="col-lg-7">
             <h2 className="h3 fw-bold mb-4 d-flex align-items-center">
               <BiMap className="me-2 text-primary" />

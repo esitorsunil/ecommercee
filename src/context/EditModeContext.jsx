@@ -1,10 +1,8 @@
-import React, { createContext, useContext, useReducer } from 'react';
+import { createContext, useContext, useReducer } from 'react';
 
-// Actions
 const TOGGLE_EDIT = 'TOGGLE_EDIT';
 const RESET_EDIT = 'RESET_EDIT';
 
-// Reducer
 const editModeReducer = (state, action) => {
   switch (action.type) {
     case TOGGLE_EDIT:
@@ -16,13 +14,10 @@ const editModeReducer = (state, action) => {
   }
 };
 
-// Initial State
 const initialState = { editMode: false };
 
-// Context
 const EditModeContext = createContext();
 
-// Provider
 export const EditModeProvider = ({ children }) => {
   const [state, dispatch] = useReducer(editModeReducer, initialState);
 
@@ -36,5 +31,4 @@ export const EditModeProvider = ({ children }) => {
   );
 };
 
-// Custom Hook
 export const useEditMode = () => useContext(EditModeContext);

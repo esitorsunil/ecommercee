@@ -1,13 +1,11 @@
-import { useEffect, useRef, useCallback, useContext } from 'react';
+import { useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ProductContext from '../context/ProductContext';
 import ProductsForYou from './ProductYou';
 
 const Home = () => {
   const { state, dispatch } = useContext(ProductContext);
-  const { products, page, totalProducts } = state;
-
-  const observer = useRef();
+  const { products, page } = state;
   const navigate = useNavigate();
   const productsPerPage = 20;
 
@@ -106,7 +104,6 @@ const Home = () => {
           </div>
         </div>
 
-        {/* Latest Collection */}
         <section className="mb-5">
           <h2 className="mb-3">Latest Collection</h2>
           <div className="row g-3">
@@ -152,7 +149,6 @@ const Home = () => {
           </div>
         </section>
 
-        {/* Best Sellers */}
         <section className="mb-5">
           <h2 className="mb-3">Best Sellers</h2>
           <div className="row g-3">
@@ -198,7 +194,6 @@ const Home = () => {
           </div>
         </section>
 
-        {/* Products for You */}
        <ProductsForYou/>
       </div>
     </>

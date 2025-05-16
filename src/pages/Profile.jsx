@@ -1,14 +1,14 @@
 import React, { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '../context/AuthContext';
-import { useEditMode } from '../context/EditModeContext'; // Add this import
+import { useEditMode } from '../context/EditModeContext';
 
 const PROFILE_STORAGE_KEY = 'userProfile';
 
 const Profile = () => {
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
   const { isAuthenticated } = useAuth();
-  const { editMode, toggleEditMode, resetEditMode } = useEditMode();  // Using your edit mode hook
+  const { editMode, toggleEditMode, resetEditMode } = useEditMode(); 
   const toastRef = useRef();
 
   useEffect(() => {

@@ -66,7 +66,6 @@ const Product = () => {
         </div>
       </div>
       <div className="mt-5">
-        {/* Assuming you have a list of similar products */}
       <ProductsForYou/>
       </div>
     </div>

@@ -31,7 +31,7 @@ const App = () => {
           <Route path="/collection" element={<Collection />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
-           <Route path="*" element={<Navigate to="/" replace />} /> {/* catch all */}
+           <Route path="*" element={<Navigate to="/" replace />} /> 
         </Routes>
       </div>
     </>
