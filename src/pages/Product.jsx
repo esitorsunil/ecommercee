@@ -2,6 +2,7 @@ import { useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import ProductContext from '../context/ProductContext';
 import ProductsForYou from './ProductYou';
+import { useAddToCart } from '../Custom Hooks/useaddToCart';
 
 const Product = () => {
   const { id } = useParams();
@@ -33,6 +34,8 @@ const Product = () => {
 
   const product = selectedProduct;
 
+  const handleAddToCart = useAddToCart();
+
   return (
     <div className="container py-5">
       <button
@@ -62,8 +65,11 @@ const Product = () => {
           </p>
           <p>Stock: {product.stock}</p>
 
-          <button className="btn btn-primary btn-lg mt-3">
-            <i className="bi bi-cart-plus me-2"></i>Add to Cart
+           <button
+            className="btn btn-outline-primary btn-sm mt-auto w-100"
+            onClick={handleAddToCart(product)}
+          >
+            <i className="bi bi-cart-plus me-1"></i>Add to Cart
           </button>
         </div>
       </div>

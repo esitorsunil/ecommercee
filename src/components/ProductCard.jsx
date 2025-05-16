@@ -1,14 +1,9 @@
 import { useNavigate } from 'react-router-dom';
-import { useCart } from '../context/CartContext';
+import { useAddToCart } from '../Custom Hooks/useaddToCart';
 
 const ProductCard = ({ product, refProp = null }) => {
   const navigate = useNavigate();
-  const { addToCart } = useCart();  // Use addToCart directly
-
-  const handleAddToCart = (e) => {
-    e.stopPropagation(); // Prevent card click
-    addToCart(product);
-  };
+  const handleAddToCart = useAddToCart();
 
   return (
     <div
@@ -39,7 +34,7 @@ const ProductCard = ({ product, refProp = null }) => {
           </p>
           <button
             className="btn btn-outline-primary btn-sm mt-auto w-100"
-            onClick={handleAddToCart}
+            onClick={handleAddToCart(product)}
           >
             <i className="bi bi-cart-plus me-1"></i>Add to Cart
           </button>
