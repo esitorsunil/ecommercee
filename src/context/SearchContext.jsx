@@ -26,7 +26,6 @@ function reducer(state, action) {
 export const SearchProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  // Fetch products once on mount
   useEffect(() => {
     const fetchProducts = async () => {
       try {

@@ -1,4 +1,4 @@
-import React, { useReducer } from 'react';
+import { useReducer } from 'react';
 import Cart from './steps/Cart';
 import Address from './steps/Address';
 import Payment from './steps/Payment';
@@ -39,7 +39,6 @@ const CheckoutLayout = () => {
 
   return (
     <div className="container pt-4">
-      {/* Step Header */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         {steps.map((step, index) => (
           <div
@@ -56,7 +55,6 @@ const CheckoutLayout = () => {
         ))}
       </div>
 
-      {/* Step Body */}
       {renderStep()}
     </div>
   );

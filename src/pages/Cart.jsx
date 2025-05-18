@@ -1,4 +1,3 @@
-import React from 'react';
 import { useCart } from '../context/CartContext';
 import { useNavigate } from 'react-router-dom';
 import StepHeader from './steps/StepHeader';
@@ -34,7 +33,6 @@ const Cart = () => {
     </div>
       ) : (
         <div className="row">
-          {/* Left Column: Product Details */}
           <div className="col-md-8">
               <h3 className="mb-4">Your Cart</h3>
             <h5 className="mb-3">Product Details</h5>
@@ -93,7 +91,6 @@ const Cart = () => {
               ))}
             </div>
 
-            {/* Clear Cart Button */}
             <button
               className="btn btn-danger mt-3"
               onClick={clearCart}
@@ -102,7 +99,6 @@ const Cart = () => {
             </button>
           </div>
 
-          {/* Right Column: Price Details */}
           <div className="col-md-4">
             <div className="border-start rounded p-4">
               <h5 className="mb-4">Price Details</h5>
@@ -115,7 +111,12 @@ const Cart = () => {
                 <span>${totalPrice.toFixed(2)}</span>
               </div>
 
-              <button className="btn btn-primary w-100 mb-3">Continue</button>
+              <button
+  className="btn btn-primary w-100 mb-3"
+  onClick={() => navigate('/shipping', { state: { totalPrice } })}
+>
+  Continue
+</button>
 
               <img
                 src="https://images.meesho.com/images/marketing/1588578650850.webp"

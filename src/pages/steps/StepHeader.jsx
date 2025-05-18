@@ -1,4 +1,3 @@
-import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const StepHeader = ({ currentStep }) => {
@@ -19,7 +18,7 @@ const StepHeader = ({ currentStep }) => {
             className="text-center flex-fill mx-2 position-relative"
             style={{ cursor: 'default' }}
           >
-            {/* Step Circle */}
+
             <div
               className={`rounded-circle d-inline-flex align-items-center justify-content-center ${getCircleClass(index)}`}
               style={{
@@ -37,23 +36,21 @@ const StepHeader = ({ currentStep }) => {
               {index + 1}
             </div>
 
-            {/* Connecting Line (except for last step) */}
             {index !== steps.length - 1 && (
               <div
                 style={{
                   position: 'absolute',
-                  top: '20px', // vertically center relative to circle height (40px / 2)
+                  top: '20px', 
                   right: '-50%',
                   width: '100%',
                   height: '1px',
                   backgroundColor:
-                    index + 1 < currentStep ? '#198754' : '#ccc', // green if completed, gray otherwise
+                    index + 1 < currentStep ? '#198754' : '#ccc', 
                   zIndex: 1,
                 }}
               />
             )}
 
-            {/* Step Label */}
             <div style={{ fontSize: '0.9rem', fontWeight: '500' }}>{label}</div>
           </div>
         ))}

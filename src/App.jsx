@@ -12,6 +12,9 @@ import './index.css';
 import Product from './pages/Product';
 import CategoryPage from './pages/CategoriesPage';
 import Cart from './pages/Cart';
+import Shipping from './pages/Shipping';
+import Payment from './pages/payment';
+import Confirmation from './pages/Confirmation';
 
 const App = () => {
   return (
@@ -32,6 +35,9 @@ const App = () => {
           <Route path="/product/:id" element={<Product />} />
           <Route path="/category/:categoryName" element={<CategoryPage />} />
            <Route path="/cart" element={<Cart />} />
+           <Route path="/shipping" element={<Shipping />} />
+           <Route path='/payment' element={<Payment />} />
+           <Route path='/confirmation' element={<Confirmation />} />
           <Route path="/collection" element={<Collection />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />

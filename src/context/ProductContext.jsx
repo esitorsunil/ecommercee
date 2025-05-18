@@ -7,7 +7,7 @@ const initialState = {
   visibleProducts: [],
   page: 0,
   totalProducts: 0,
-  selectedProduct: null, // add this for single product detail
+  selectedProduct: null,
 };
 
 const productReducer = (state, action) => {

@@ -163,7 +163,6 @@ const Header = () => {
         </div>
       </nav>
 
-      {/* Logout Confirmation Modal */}
       <div
         className="modal fade"
         id="logoutModal"
@@ -204,7 +203,6 @@ const Header = () => {
         </div>
       </div>
 
-      {/* Login Prompt Modal */}
       <div
         className="modal fade"
         id="loginPromptModal"
@@ -251,7 +249,6 @@ const Header = () => {
         </div>
       </div>
 
-      {/* Login Success Toast */}
       <div
         className="position-fixed top-0 start-50 translate-middle-x p-3"
         style={{ zIndex: 1080 }}
