@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import StepHeader from './steps/StepHeader';
+import StepHeader from '../Cart Pages/StepHeader';
 import { usePaymentContext } from '../context/PaymentContext';
 
 const Payment = () => {

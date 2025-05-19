@@ -14,3 +14,58 @@
 .nav-link {
   font-weight:600 !important;
 }
+
+/* Underline style input */
+.underline-input {
+  border: none;
+  border-bottom: 1px solid #ced4da;
+  border-radius: 0;
+  box-shadow: none;
+  padding-left: 0;
+}
+
+.underline-input:focus {
+  border-color: #0d6efd;
+  box-shadow: none;
+  outline: none;
+}
+
+/* Shipping.css */
+
+/* Remove default borders, add only bottom border */
+.underline-input {
+  border: none;               /* Remove all borders */
+  border-bottom: 2px solid #ccc;  /* Light grey underline */
+  border-radius: 0;           /* No rounding */
+  padding: 6px 0;             /* Vertical padding only */
+  background-color: transparent;
+  outline: none;
+  transition: border-color 0.3s ease;
+  width: 100%;
+}
+
+/* On focus, underline becomes blue */
+.underline-input:focus {
+  border-bottom-color: #0d6efd; /* Bootstrap primary blue */
+  outline: none;
+  box-shadow: none;
+}
+
+/* Show red underline if error */
+.underline-input.is-invalid {
+  border-bottom-color: #dc3545; /* Bootstrap danger red */
+}
+
+/* To make input labels distinct if needed */
+label {
+  font-weight: 500;
+  margin-bottom: 4px;
+  display: block;
+}
+
+/* Change label color when input is focused */
+.form-group:focus-within > label {
+  color: blue;
+  transition: color 0.3s ease;
+}
+

@@ -11,10 +11,10 @@ import ProtectedRoute from './components/ProtectedRoute';
 import './index.css';
 import Product from './pages/Product';
 import CategoryPage from './pages/CategoriesPage';
-import Cart from './pages/Cart';
-import Shipping from './pages/Shipping';
+import Cart from './Cart Pages/Cart';
+import Shipping from './Cart Pages/Shipping';
 import Payment from './pages/payment';
-import Confirmation from './pages/Confirmation';
+import Confirmation from './Cart Pages/Confirmation';
 
 const App = () => {
   return (

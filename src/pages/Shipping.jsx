@@ -1,75 +1,152 @@
-import React, { useState } from 'react';
+import { useFieldArray, useForm } from 'react-hook-form';
 import { useLocation, useNavigate } from 'react-router-dom';
-import StepHeader from './steps/StepHeader';
+import StepHeader from '../Cart Pages/StepHeader';
+import { useEffect } from 'react';
+
+const indianStates = [
+  'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh',
+  'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand',
+  'Karnataka', 'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur',
+  'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Punjab',
+  'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura',
+  'Uttar Pradesh', 'Uttarakhand', 'West Bengal'
+];
 
 const Shipping = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const totalPrice = location.state?.totalPrice || 0;
 
-  const [showModal, setShowModal] = useState(false);
-  const [addresses, setAddresses] = useState([]);
-  const [selectedAddress, setSelectedAddress] = useState(null);
-  const [editIndex, setEditIndex] = useState(null);
-
-  const [form, setForm] = useState({
-    name: '',
-    city: '',
-    houseNo: '',
-    street: '',
-    state: '',
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    watch,
+    control,
+    formState: { errors },
+  } = useForm({
+    mode: 'onChange',
+    defaultValues: {
+      addresses: [],
+      selectedAddress: null,
+      showModal: false,
+      editIndex: null,
+      name: '',
+      mobile: '',
+      houseNo: '',
+      area: '',
+      pincode: '',
+      city: '',
+      state: '',
+    },
   });
 
-  const [errors, setErrors] = useState({});
+  const addresses = watch('addresses');
+  const editIndex = watch('editIndex');
+  const showModal = watch('showModal');
+  const selectedAddressIndex = watch('selectedAddress');
 
-  const validate = () => {
-    const errs = {};
-    if (!form.name.trim()) errs.name = 'Name is required';
-    if (!form.city.trim()) errs.city = 'City is required';
-    if (!form.houseNo.trim()) errs.houseNo = 'House number is required';
-    if (!form.street.trim()) errs.street = 'Street name is required';
-    if (!form.state.trim()) errs.state = 'State is required';
-    setErrors(errs);
-    return Object.keys(errs).length === 0;
-  };
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  const { fields, append, update } = useFieldArray({
+    control,
+    name: 'addresses',
+  });
 
   const openModal = (index = null) => {
-    setEditIndex(index);
+    setValue('editIndex', index);
     if (index !== null) {
-      setForm(addresses[index]);
+      const addr = addresses[index];
+      Object.entries(addr).forEach(([key, val]) => setValue(key, val));
     } else {
-      setForm({ name: '', city: '', houseNo: '', street: '', state: '' });
+      reset({
+        ...watch(),
+        name: '',
+        mobile: '',
+        houseNo: '',
+        area: '',
+        pincode: '',
+        city: '',
+        state: '',
+      });
     }
-    setShowModal(true);
+    setValue('showModal', true);
   };
 
-  const handleSaveAddress = () => {
-    if (!validate()) return;
-    const updatedAddresses = [...addresses];
-    if (editIndex !== null) {
-      updatedAddresses[editIndex] = form;
+  const handleSaveAddress = (data) => {
+    const currentIndex = watch('editIndex');
+
+    // Parse localStorage once
+    const allAddresses = JSON.parse(localStorage.getItem('addresses')) || {};
+    const user = JSON.parse(localStorage.getItem('user'));
+    const userEmail = user?.email;
+    const userAddresses = allAddresses[userEmail] || [];
+
+    if (currentIndex !== null) {
+      update(currentIndex, data);
+      userAddresses[currentIndex] = data;
     } else {
-      updatedAddresses.push(form);
+      append(data);
+      userAddresses.push(data);
     }
-    setAddresses(updatedAddresses);
-    setShowModal(false);
-    setForm({ name: '', city: '', houseNo: '', street: '', state: '' });
-    setEditIndex(null);
+
+    allAddresses[userEmail] = userAddresses;
+    localStorage.setItem('addresses', JSON.stringify(allAddresses));
+
+    setValue('showModal', false);
+    setValue('editIndex', null);
+    reset({
+      ...watch(),
+      name: '',
+      mobile: '',
+      houseNo: '',
+      area: '',
+      pincode: '',
+      city: '',
+      state: '',
+    });
   };
 
-  const handleSubmit = (e) => {
+  useEffect(() => {
+    // Load addresses once on mount
+    const allAddresses = JSON.parse(localStorage.getItem('addresses')) || {};
+    const user = JSON.parse(localStorage.getItem('user'));
+    const userEmail = user?.email;
+    const savedAddresses = allAddresses[userEmail] || [];
+
+    if (savedAddresses.length > 0) {
+      savedAddresses.forEach((addr) => append(addr));
+    }
+  }, [append]);
+
+  const handleSubmitShipping = (e) => {
     e.preventDefault();
-    if (selectedAddress === null) {
+    const selectedIndex = selectedAddressIndex;
+
+    if (selectedIndex === null || selectedIndex === undefined) {
       alert('Please select a shipping address');
       return;
     }
 
+    const allAddresses = JSON.parse(localStorage.getItem('addresses')) || {};
+    const user = JSON.parse(localStorage.getItem('user'));
+    const userEmail = user?.email;
+    const userAddresses = allAddresses[userEmail] || [];
+
+    const selectedAddress = userAddresses[selectedIndex];
+
+    if (!selectedAddress) {
+      alert('Selected address not found');
+      return;
+    }
+
+    // Save selected address in localStorage (key: 'selectedShippingAddress')
+    localStorage.setItem('selectedShippingAddress', JSON.stringify(selectedAddress));
+
     navigate('/payment', {
-      state: { totalPrice, address: addresses[selectedAddress] },
+      state: {
+        totalPrice,
+        address: selectedAddress,
+      },
     });
   };
 
@@ -87,8 +164,8 @@ const Shipping = () => {
             </div>
 
             <div className="accordion" id="addressAccordion">
-              {addresses.map((address, index) => (
-                <div className="accordion-item" key={index}>
+              {fields.map((address, index) => (
+                <div className="accordion-item" key={address.id}>
                   <h2 className="accordion-header">
                     <button
                       className="accordion-button collapsed"
@@ -101,10 +178,12 @@ const Shipping = () => {
                           type="radio"
                           className="form-check-input me-2"
                           name="selectedAddress"
-                          checked={selectedAddress === index}
-                          onChange={() => setSelectedAddress(index)}
+                          checked={selectedAddressIndex === index}
+                          onChange={() => setValue('selectedAddress', index)}
                         />
-                        <strong>{address.name} - {address.city}</strong>
+                        <strong>
+                          {address.name} - {address.city}
+                        </strong>
                       </div>
                     </button>
                   </h2>
@@ -114,9 +193,24 @@ const Shipping = () => {
                     data-bs-parent="#addressAccordion"
                   >
                     <div className="accordion-body">
-                      <p><strong>House No:</strong> {address.houseNo}</p>
-                      <p><strong>Street:</strong> {address.street}</p>
-                      <p><strong>State:</strong> {address.state}</p>
+                      <p>
+                        <strong>Mobile:</strong> {address.mobile}
+                      </p>
+                      <p>
+                        <strong>House No:</strong> {address.houseNo}
+                      </p>
+                      <p>
+                        <strong>Area:</strong> {address.area}
+                      </p>
+                      <p>
+                        <strong>Pincode:</strong> {address.pincode}
+                      </p>
+                      <p>
+                        <strong>City:</strong> {address.city}
+                      </p>
+                      <p>
+                        <strong>State:</strong> {address.state}
+                      </p>
                       <button className="btn btn-sm btn-outline-secondary" onClick={() => openModal(index)}>
                         Edit
                       </button>
@@ -126,7 +220,7 @@ const Shipping = () => {
               ))}
             </div>
 
-            <button type="submit" className="btn btn-primary mt-4" onClick={handleSubmit}>
+            <button className="btn btn-primary mt-4" onClick={handleSubmitShipping}>
               Continue to Payment
             </button>
           </div>
@@ -143,40 +237,120 @@ const Shipping = () => {
         </div>
       </div>
 
-      {/* Address Modal */}
       {showModal && (
         <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
           <div className="modal-dialog">
-            <div className="modal-content">
+            <form className="modal-content" onSubmit={handleSubmit(handleSaveAddress)}>
               <div className="modal-header">
-                <h5 className="modal-title">{editIndex !== null ? 'Edit Address' : 'Add New Address'}</h5>
-                <button type="button" className="btn-close" onClick={() => setShowModal(false)}></button>
+                <h5 className="modal-title py-2">{editIndex !== null ? 'Edit Delivery Address' : 'Add Delivery Address'}</h5>
+                <button type="button" className="btn-close" onClick={() => setValue('showModal', false)}></button>
               </div>
               <div className="modal-body">
-                {['name', 'city', 'houseNo', 'street', 'state'].map((field) => (
-                  <div className="mb-3" key={field}>
-                    <label className="form-label text-capitalize">{field}</label>
+                {/* Contact Details */}
+                <h5 className="mb-3 d-flex align-items-center">
+                  <i className="bi bi-telephone-inbound-fill text-primary me-2"></i> Contact Details
+                </h5>
+
+                <div className="mb-3">
+                  <label htmlFor="name" className="form-label">
+                    Name
+                  </label>
+                  <input
+                    id="name"
+                    className={`underline-input ${errors.name ? 'is-invalid' : ''}`}
+                    {...register('name', { required: 'Name is required' })}
+                  />
+                  {errors.name && <div className="invalid-feedback">{errors.name.message}</div>}
+                </div>
+
+                <div className="mb-3">
+                  <label className="form-label">Mobile Number</label>
+                  <div className="input-group">
                     <input
-                      type="text"
-                      name={field}
-                      className={`form-control ${errors[field] ? 'is-invalid' : ''}`}
-                      value={form[field]}
-                      onChange={handleChange}
+                      className={`underline-input ${errors.mobile ? 'is-invalid' : ''}`}
+                      {...register('mobile', {
+                        required: 'Mobile number is required',
+                        pattern: { value: /^[0-9]{10}$/, message: 'Enter a valid 10-digit mobile number' },
+                      })}
                     />
-                    {errors[field] && <div className="invalid-feedback">{errors[field]}</div>}
                   </div>
+                  {errors.mobile && <div className="invalid-feedback d-block">{errors.mobile.message}</div>}
+                </div>
+
+                {/* Address */}
+                <h5 className="mt-5 mb-3 d-flex align-items-center">
+                  <i className="bi bi-geo-alt-fill me-2 text-primary"></i> Address
+                </h5>
+
+                <div className="mb-3">
+                  <label className="form-label">House No</label>
+                  <input
+                    className={`underline-input ${errors.houseNo ? 'is-invalid' : ''}`}
+                    {...register('houseNo', { required:'House number is required' })}
+/>
+{errors.houseNo && <div className="invalid-feedback">{errors.houseNo.message}</div>}
+</div>
+
+            <div className="mb-3">
+              <label className="form-label">Area</label>
+              <input
+                className={`underline-input ${errors.area ? 'is-invalid' : ''}`}
+                {...register('area', { required: 'Area is required' })}
+              />
+              {errors.area && <div className="invalid-feedback">{errors.area.message}</div>}
+            </div>
+
+            <div className="mb-3">
+              <label className="form-label">Pincode</label>
+              <input
+                className={`underline-input ${errors.pincode ? 'is-invalid' : ''}`}
+                {...register('pincode', {
+                  required: 'Pincode is required',
+                  pattern: { value: /^[1-9][0-9]{5}$/, message: 'Enter a valid 6-digit pincode' },
+                })}
+              />
+              {errors.pincode && <div className="invalid-feedback">{errors.pincode.message}</div>}
+            </div>
+
+            <div className="mb-3">
+              <label className="form-label">City</label>
+              <input
+                className={`underline-input ${errors.city ? 'is-invalid' : ''}`}
+                {...register('city', { required: 'City is required' })}
+              />
+              {errors.city && <div className="invalid-feedback">{errors.city.message}</div>}
+            </div>
+
+            <div className="mb-3">
+              <label className="form-label">State</label>
+              <select
+                className={`form-select ${errors.state ? 'is-invalid' : ''}`}
+                {...register('state', { required: 'State is required' })}
+              >
+                <option value="">Select State</option>
+                {indianStates.map((st) => (
+                  <option key={st} value={st}>
+                    {st}
+                  </option>
                 ))}
-              </div>
-              <div className="modal-footer">
-                <button className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancel</button>
-                <button className="btn btn-primary" onClick={handleSaveAddress}>Save Address</button>
-              </div>
+              </select>
+              {errors.state && <div className="invalid-feedback">{errors.state.message}</div>}
             </div>
           </div>
-        </div>
-      )}
-    </>
-  );
+          <div className="modal-footer">
+            <button type="button" className="btn btn-secondary" onClick={() => setValue('showModal', false)}>
+              Cancel
+            </button>
+            <button type="submit" className="btn btn-primary">
+              Save Address
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )}
+</>
+);
 };
 
 export default Shipping;

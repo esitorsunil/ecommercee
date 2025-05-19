@@ -1,10 +1,8 @@
-// src/context/CartContext.jsx
-import React, { createContext, useReducer, useContext, useEffect } from 'react';
-
+import { createContext, useReducer, useContext, useEffect } from 'react';
 const CartContext = createContext();
 
 const initialState = {
-  items: [], // Each item: { id, title, price, quantity, image, thumbnail }
+  items: [], 
 };
 
 function cartReducer(state, action) {
@@ -63,7 +61,6 @@ function cartReducer(state, action) {
 export const CartProvider = ({ children }) => {
   const [state, dispatch] = useReducer(cartReducer, initialState);
 
-  // Load from localStorage on initial mount
   useEffect(() => {
     const storedCart = localStorage.getItem('cartItems');
     if (storedCart) {
