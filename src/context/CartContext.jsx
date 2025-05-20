@@ -2,13 +2,15 @@ import { createContext, useReducer, useContext, useEffect } from 'react';
 const CartContext = createContext();
 
 const initialState = {
-  items: [], 
+  items: [],
+  isGift: false,
+  giftMessage: '',
 };
 
 function cartReducer(state, action) {
   switch (action.type) {
     case 'INITIALIZE_CART':
-      return { ...state, items: action.payload };
+      return { ...state, ...action.payload };
 
     case 'ADD_TO_CART': {
       const existing = state.items.find(item => item.id === action.payload.id);
@@ -51,7 +53,13 @@ function cartReducer(state, action) {
     }
 
     case 'CLEAR_CART':
-      return { ...state, items: [] };
+      return { items: [], isGift: false, giftMessage: '' };
+
+    case 'TOGGLE_GIFT':
+      return { ...state, isGift: !state.isGift };
+
+    case 'SET_GIFT_MESSAGE':
+      return { ...state, giftMessage: action.payload };
 
     default:
       return state;
@@ -62,15 +70,15 @@ export const CartProvider = ({ children }) => {
   const [state, dispatch] = useReducer(cartReducer, initialState);
 
   useEffect(() => {
-    const storedCart = localStorage.getItem('cartItems');
+    const storedCart = localStorage.getItem('cart');
     if (storedCart) {
       dispatch({ type: 'INITIALIZE_CART', payload: JSON.parse(storedCart) });
     }
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('cartItems', JSON.stringify(state.items));
-  }, [state.items]);
+    localStorage.setItem('cart', JSON.stringify(state));
+  }, [state]);
 
   const addToCart = (item) => {
     const simplified = {
@@ -84,9 +92,20 @@ export const CartProvider = ({ children }) => {
 
   const removeFromCart = (id) => dispatch({ type: 'REMOVE_FROM_CART', payload: id });
   const clearCart = () => dispatch({ type: 'CLEAR_CART' });
+  const toggleGiftPack = () => dispatch({ type: 'TOGGLE_GIFT' });
+  const setGiftMessage = (message) => dispatch({ type: 'SET_GIFT_MESSAGE', payload: message });
 
   return (
-    <CartContext.Provider value={{ cart: state, addToCart, removeFromCart, clearCart }}>
+    <CartContext.Provider
+      value={{
+        cart: state,
+        addToCart,
+        removeFromCart,
+        clearCart,
+        toggleGiftPack,
+        setGiftMessage,
+      }}
+    >
       {children}
     </CartContext.Provider>
   );
