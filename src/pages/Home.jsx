@@ -5,6 +5,7 @@ import ProductContext from '../context/ProductContext';
 import ProductsForYou from './ProductYou';
 import ProductCategories from './ProductCategory';
 import ProductCard from '../components/ProductCard';
+import SimilarProductsYouLike from './SimilarProduct';
 
 const Home = () => {
   const { state, dispatch } = useContext(ProductContext);
@@ -36,12 +37,10 @@ const Home = () => {
     .sort((a, b) => b.id - a.id)
     .slice(0, 10);
 
-  const bestSellers = [...products]
-    .sort((a, b) => b.rating - a.rating)
-    .slice(0, 5);
+const bestSellers = products.slice(-5);
 
-  const bestSellerIds = new Set(bestSellers.map(p => p.id));
-  const latestOnly = latestProducts.filter(p => !bestSellerIds.has(p.id));
+const bestSellerIds = new Set(bestSellers.map(p => p.id));
+const latestOnly = latestProducts.filter(p => !bestSellerIds.has(p.id));
 
   return (
     <>
@@ -112,6 +111,8 @@ const Home = () => {
 
         <ProductCategories />
 
+
+
          <div className="my-5">
           <img
             src="https://media.powerlook.in/mycustomfolder/bottom_banner.jpg?aio=w-1200"
@@ -124,6 +125,7 @@ const Home = () => {
             }}
           />
         </div>
+    
 
         <section className="mb-5 mt-5">
           <h2 className="mb-3">Best Sellers</h2>

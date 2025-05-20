@@ -52,7 +52,7 @@ const Confirmation = () => {
   return (
     <>
       <StepHeader currentStep={4} />
-      <div className="container pt-5">
+      <div className="container pt-5 bg-light">
         <CartDetails
           totalItems={totalItems}
           totalPrice={totalPrice}
@@ -62,38 +62,39 @@ const Confirmation = () => {
 
         <div className="row my-3">
   <div className="col-md-7">
-    <h5 className="mb-3 text-secondary">Delivery Address</h5>
+    {/* Delivery Address */}
+    <h5 className="mb-3 text-secondary"><i class="bi bi-geo-fill text-primary me-2"></i>Delivery Address</h5>
     {selectedAddress && (
-      <div className="card mb-4 shadow-sm border-0"> {/* Remove card border */}
+      <div className="card mb-4  bg-light border-1">
         <div className="card-body">
           <div className="d-flex justify-content-between align-items-center">
-            <p className="fw-bold mb-0">{selectedAddress.name}</p>
-            <button 
-              className="btn btn-link text-primary p-0 fw-bold" 
+            <p className="fw-semibold mb-0 ">{selectedAddress.name}</p>
+            <button
+              className="btn btn-link text-primary fw-bold p-0"
               onClick={handleEditAddress}
-              style={{ textDecoration: 'none' }} // Remove underline if you want
+              style={{ textDecoration: 'none' }}
             >
               EDIT
             </button>
           </div>
-
-          <p>
+          <p className="mb-1 text-secondary">
             {[selectedAddress.houseNo, selectedAddress.area, selectedAddress.pincode, selectedAddress.city, selectedAddress.state]
               .filter(Boolean)
               .join(', ')}
           </p>
-          <p>{selectedAddress.mobile}</p>
+          <p className="mb-0 text-secondary">{selectedAddress.mobile}</p>
         </div>
       </div>
     )}
 
+    {/* Payment Mode */}
     <h5 className="mb-3 text-secondary">Payment Mode</h5>
     {paymentMethod && (
-      <div className="card mb-4 shadow-sm border-0">
+      <div className="card mb-4  bg-light border-1">
         <div className="card-body">
           <div className="d-flex justify-content-between align-items-center">
-            <p className="mb-0">
-              <strong>Selected Method:</strong> {paymentMethod}
+            <p className="mb-0 fw-semibold">
+           {paymentMethod}
             </p>
             <button
               className="btn btn-link text-primary fw-bold p-0"
@@ -102,12 +103,13 @@ const Confirmation = () => {
             >
               EDIT
             </button>
-         </div>
+          </div>
         </div>
       </div>
     )}
   </div>
 </div>
+
       </div>
     </>
   );

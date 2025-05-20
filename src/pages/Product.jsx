@@ -5,6 +5,7 @@ import ProductsForYou from './ProductYou';
 import { useAddToCart } from '../Custom Hooks/useaddToCart';
 
 const Product = () => {
+    const handleAddToCart = useAddToCart();
   const { id } = useParams();
   const navigate = useNavigate();
   const { state, dispatch } = useContext(ProductContext);
@@ -34,7 +35,7 @@ const Product = () => {
 
   const product = selectedProduct;
 
-  const handleAddToCart = useAddToCart();
+
 
   return (
     <div className="container py-5">

@@ -13,7 +13,7 @@ const Cart = () => {
   return (
     <>
       <StepHeader currentStep={1} />
-      <div className="container pt-5">
+      <div className="container pt-5 bg-light">
         {cart.items.length === 0 ? (
           <div
             className="d-flex flex-column align-items-center justify-content-center"

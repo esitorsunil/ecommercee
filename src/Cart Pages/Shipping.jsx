@@ -161,7 +161,7 @@ const Shipping = () => {
   return (
     <>
       <StepHeader currentStep={2} />
-      <div className="container pt-5">
+      <div className="container pt-5 bg-light">
         <div className="row">
           <div className="col-md-7 col-lg-7">
             <div className="d-flex justify-content-between align-items-center mb-4">
@@ -185,15 +185,15 @@ const Shipping = () => {
               onChange={() => setValue('selectedAddress', index)}
               id={`address-${index}`}
             />
-            <label htmlFor={`address-${index}`} className="form-check-label fw-bold">
+            <label htmlFor={`address-${index}`} className="form-check-label fw-semibold">
               {address.name} - {address.city}
             </label>
           </div>
          
-<p className="mb-2 text-muted">
-  {address.houseNo}, {address.area}, {address.city} - {address.pincode}, {address.state}
+<p className="mb-2 text-secondary">
+  {address.houseNo}, {address.area}, {address.city} , {address.state} - {address.pincode}
 </p>
-<p className="mb-1"> {address.mobile}</p>
+<p className="mb-1 text-secondary"> {address.mobile}</p>
           <div className="d-flex justify-content-end">
             <button
               className="btn btn-outline-secondary btn-sm me-2"
