@@ -1,10 +1,15 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAddToCart } from '../Custom Hooks/useaddToCart';
+import { useDispatch, useSelector } from 'react-redux';
+import { toggleWishlist } from '../Redux/WishlistSlice';
 
 const ProductCard = ({ product, refProp = null }) => {
   const navigate = useNavigate();
   const handleAddToCart = useAddToCart();
+  const dispatch = useDispatch();
+const wishlist = useSelector((state) => state.wishlist);
+const isWishlisted = wishlist.some((item) => item.id === product.id);
 
   const [shareOpen, setShareOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -41,6 +46,16 @@ const ProductCard = ({ product, refProp = null }) => {
       ref={refProp}
     >
       <div className="card h-100 shadow-sm">
+        <div className="position-absolute top-0 end-0 m-2" onClick={(e) => {
+  e.stopPropagation();
+  dispatch(toggleWishlist(product));
+}}>
+  <i
+    className={`bi bi-heart${isWishlisted ? '-fill text-danger' : ''}`}
+    style={{ fontSize: '1.2rem', cursor: 'pointer' }}
+    aria-label="Add to Wishlist"
+  ></i>
+</div>
         <img
           src={product.thumbnail || product.image}
           className="card-img-top p-3"
@@ -65,10 +80,7 @@ const ProductCard = ({ product, refProp = null }) => {
           <div className="d-flex gap-2 mt-auto">
             <button
               className="btn btn-outline-primary btn-sm flex-grow-1"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleAddToCart(product);
-              }}
+              onClick={handleAddToCart(product)}
             >
               <i className="bi bi-cart-plus me-1"></i>Add to Cart
             </button>
@@ -84,6 +96,7 @@ const ProductCard = ({ product, refProp = null }) => {
                 aria-label="Share"
               >
                 <i className="bi bi-share-fill"></i>
+                
               </button>
 
               {/* Dropdown */}
@@ -99,18 +112,21 @@ const ProductCard = ({ product, refProp = null }) => {
       { url: whatsappShareUrl, icon: "bi-whatsapp", name: "WhatsApp" },
       { url: instagramUrl, icon: "bi-instagram", name: "Instagram" }
     ].map(({ url, icon, name }) => (
-      <a
-        key={name}
-        href={url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-center text-decoration-none flex-grow-1 mx-1"
-        aria-label={`Share on ${name}`}
-        style={{ color: 'inherit', fontSize: '0.9rem' }} // no text color override
-      >
-        <i className={`bi ${icon} fs-3 d-block mb-1`}></i>
-        <span>{name}</span>
-      </a>
+      <button
+  key={name}
+  type="button"
+  onClick={(e) => {
+    e.stopPropagation();
+    window.open(url, '_blank', 'width=600,height=400');
+  }}
+  className="text-center text-decoration-none flex-grow-1 mx-1 border-0 bg-transparent"
+  aria-label={`Share on ${name}`}
+  style={{ color: 'inherit', fontSize: '0.9rem', cursor: 'pointer' }}
+>
+  <i className={`bi ${icon} fs-4 share-icon d-block mb-1`}></i>
+  <span>{name}</span>
+</button>
+
     ))}
   </div>
 )}

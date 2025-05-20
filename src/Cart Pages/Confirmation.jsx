@@ -52,7 +52,7 @@ const Confirmation = () => {
   return (
     <>
       <StepHeader currentStep={4} />
-      <div className="container pt-5 bg-light">
+      <div className="container pt-5">
         <CartDetails
           totalItems={totalItems}
           totalPrice={totalPrice}

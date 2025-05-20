@@ -15,12 +15,13 @@ import Cart from './Cart Pages/Cart';
 import Shipping from './Cart Pages/Shipping';
 import Payment from './Cart Pages/payment';
 import Confirmation from './Cart Pages/Confirmation';
+import WishlistPage from './pages/Wishlist';
 
 const App = () => {
   return (
     <>
       <Header />
-      <div className="bg-light">
+      <div className='bg-light'>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
@@ -41,9 +42,10 @@ const App = () => {
           <Route path="/collection" element={<Collection />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/wishlist" element={<WishlistPage />} />
            <Route path="*" element={<Navigate to="/" replace />} /> 
         </Routes>
-      </div>
+    </div>
     </>
   );
 };

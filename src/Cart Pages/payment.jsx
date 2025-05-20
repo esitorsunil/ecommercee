@@ -42,7 +42,7 @@ const Payment = () => {
   return (
     <>
       <StepHeader currentStep={3} />
-      <div className="container pt-5 bg-light">
+      <div className="container pt-5">
         <div className="row">
           <div className="col-md-8">
             <h3 className="mb-4">Choose Payment Method</h3>

@@ -161,7 +161,7 @@ const Shipping = () => {
   return (
     <>
       <StepHeader currentStep={2} />
-      <div className="container pt-5 bg-light">
+      <div className="container pt-5">
         <div className="row">
           <div className="col-md-7 col-lg-7">
             <div className="d-flex justify-content-between align-items-center mb-4">

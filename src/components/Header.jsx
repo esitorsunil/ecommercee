@@ -2,10 +2,12 @@ import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useSearch } from '../context/SearchContext';
 import { useCart } from '../context/CartContext';
+import { useSelector } from 'react-redux';
 
 const Header = () => {
   const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
+  const wishlist = useSelector((state) => state.wishlist);
 
   const { state, dispatch } = useSearch();
   const { products, query, showDropdown } = state;
@@ -63,6 +65,14 @@ const Header = () => {
               })}
             </ul>
           </div>
+          <div className="position-relative me-5" onClick={() => navigate('/wishlist')} style={{ cursor: 'pointer' }}>
+ <i class="bi bi-bookmark-heart fs-5"></i>
+  {wishlist.length > 0 && (
+    <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+      {wishlist.length}
+    </span>
+  )}
+</div>
 
           <div className="d-flex align-items-center gap-4">
             <div className="position-relative" style={{ width: '300px' }}>
@@ -202,7 +212,7 @@ const Header = () => {
           </div>
         </div>
       </div>
-
+ 
       <div
         className="modal fade"
         id="loginPromptModal"
