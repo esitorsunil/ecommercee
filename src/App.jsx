@@ -13,7 +13,7 @@ import Product from './pages/Product';
 import CategoryPage from './pages/CategoriesPage';
 import Cart from './Cart Pages/Cart';
 import Shipping from './Cart Pages/Shipping';
-import Payment from './pages/payment';
+import Payment from './Cart Pages/payment';
 import Confirmation from './Cart Pages/Confirmation';
 
 const App = () => {

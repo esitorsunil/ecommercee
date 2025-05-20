@@ -1,84 +1,113 @@
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
 import StepHeader from './StepHeader';
+import CartDetails from './CartDetails';
+import { useCart } from '../context/CartContext';
+import { useNavigate } from 'react-router-dom';
 
 const Confirmation = () => {
+  const { cart, clearCart } = useCart();
   const navigate = useNavigate();
+  const [selectedAddress, setSelectedAddress] = useState(null);
+  const [paymentMethod, setPaymentMethod] = useState('');
 
-  const products = JSON.parse(localStorage.getItem('cart')) || [];
-  const address = JSON.parse(localStorage.getItem('selectedAddress')) || {};
-  const paymentMethod = localStorage.getItem('paymentMethod') || '';
-  const totalPrice = parseFloat(localStorage.getItem('totalPrice')) || 0;
+  const totalItems = cart.items.reduce((sum, item) => sum + item.quantity, 0);
+  const totalPrice = cart.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const handlePlaceOrder = () => {
-    alert('Order Placed Successfully!');
-    localStorage.clear();
-    navigate('/');
+    // Clear specific items from localStorage
+    localStorage.removeItem('cartItems');
+    localStorage.removeItem('selectedPaymentMethod');
+    localStorage.removeItem('selectedShippingAddress');
+  
+    // Optionally, you could clear the entire localStorage with:
+    // localStorage.clear();
+      // 2. Clear cart from context (in-memory)
+  clearCart();
+  
+    // Navigate to home page
+    navigate('/home');
   };
+
+  const handleEditAddress = () => {
+    navigate('/shipping');
+  };
+
+  const handleEditPayment = () => {
+    navigate('/payment');
+  };
+
+  // Load from localStorage
+  useEffect(() => {
+    const savedAddress = localStorage.getItem('selectedShippingAddress');
+    if (savedAddress) {
+      setSelectedAddress(JSON.parse(savedAddress));
+    }
+
+    const savedPayment = localStorage.getItem('selectedPaymentMethod');
+    if (savedPayment) {
+      setPaymentMethod(savedPayment);
+    }
+  }, []);
 
   return (
     <>
       <StepHeader currentStep={4} />
       <div className="container pt-5">
-        <div className="row">
+        <CartDetails
+          totalItems={totalItems}
+          totalPrice={totalPrice}
+          buttonText="Place Order"
+          onButtonClick={handlePlaceOrder}
+        />
 
-          <div className="col-md-8">
-
-            <div className="mb-4">
-              <div className="d-flex justify-content-between align-items-center">
-                <h4>Products</h4>
-                <button className="btn btn-link" onClick={() => navigate('/')}>Edit</button>
-              </div>
-              {products.length === 0 ? (
-                <p>No products selected.</p>
-              ) : (
-                <ul className="list-group">
-                  {products.map((product, idx) => (
-                    <li key={idx} className="list-group-item d-flex justify-content-between align-items-center">
-                      <span>
-                        <strong>{product.title}</strong> (x{product.quantity || 1})
-                      </span>
-                      <span>${(product.price * (product.quantity || 1)).toFixed(2)}</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-
-            <div className="mb-4">
-              <div className="d-flex justify-content-between align-items-center">
-                <h4>Delivery Address</h4>
-                <button className="btn btn-link" onClick={() => navigate('/shipping')}>Edit</button>
-              </div>
-              <p><strong>Name:</strong> {address.name}</p>
-              <p><strong>House No:</strong> {address.houseNo}</p>
-              <p><strong>Street:</strong> {address.street}</p>
-              <p><strong>City:</strong> {address.city}</p>
-              <p><strong>State:</strong> {address.state}</p>
-            </div>
-
-            <div>
-              <div className="d-flex justify-content-between align-items-center">
-                <h4>Payment Method</h4>
-                <button className="btn btn-link" onClick={() => navigate('/payment')}>Edit</button>
-              </div>
-              <p><strong>Method:</strong> {paymentMethod}</p>
-            </div>
-
+        <div className="row my-3">
+  <div className="col-md-7">
+    <h5 className="mb-3 text-secondary">Delivery Address</h5>
+    {selectedAddress && (
+      <div className="card mb-4 shadow-sm border-0"> {/* Remove card border */}
+        <div className="card-body">
+          <div className="d-flex justify-content-between align-items-center">
+            <p className="fw-bold mb-0">{selectedAddress.name}</p>
+            <button 
+              className="btn btn-link text-primary p-0 fw-bold" 
+              onClick={handleEditAddress}
+              style={{ textDecoration: 'none' }} // Remove underline if you want
+            >
+              EDIT
+            </button>
           </div>
 
-          <div className="col-md-4">
-            <div className="border-start rounded p-4">
-              <h5 className="mb-4">Price Details</h5>
-              <div className="d-flex justify-content-between mb-3 border-bottom pb-3">
-                <span>Order Total</span>
-                <span>${totalPrice.toFixed(2)}</span>
-              </div>
-              <button className="btn btn-success w-100 mt-3" onClick={handlePlaceOrder}>
-                Place Order
-              </button>
-            </div>
-          </div>
+          <p>
+            {[selectedAddress.houseNo, selectedAddress.area, selectedAddress.pincode, selectedAddress.city, selectedAddress.state]
+              .filter(Boolean)
+              .join(', ')}
+          </p>
+          <p>{selectedAddress.mobile}</p>
         </div>
+      </div>
+    )}
+
+    <h5 className="mb-3 text-secondary">Payment Mode</h5>
+    {paymentMethod && (
+      <div className="card mb-4 shadow-sm border-0">
+        <div className="card-body">
+          <div className="d-flex justify-content-between align-items-center">
+            <p className="mb-0">
+              <strong>Selected Method:</strong> {paymentMethod}
+            </p>
+            <button
+              className="btn btn-link text-primary fw-bold p-0"
+              onClick={handleEditPayment}
+              style={{ textDecoration: 'none' }}
+            >
+              EDIT
+            </button>
+         </div>
+        </div>
+      </div>
+    )}
+  </div>
+</div>
       </div>
     </>
   );

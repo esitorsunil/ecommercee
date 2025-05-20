@@ -1,4 +1,4 @@
-import { ShippingProvider } from './AddressContext';
+
 import { AuthProvider } from './AuthContext';
 import { CartProvider } from './CartContext';
 import { EditModeProvider } from './EditModeContext';
@@ -13,7 +13,6 @@ const providers = [
   EditModeProvider,
   CartProvider,
   PaymentProvider,
-  ShippingProvider
 ];
 
 const CombinedProviders = ({ children }) => {
