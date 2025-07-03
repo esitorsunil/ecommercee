@@ -164,7 +164,7 @@ const Collection = () => {
 
       <main style={{ flex: 1 }}>
         <div className="row g-3">
-          {status === 'loading' && <p>Loading products...</p>}
+          {/* Removed: status === 'loading' && <p>Loading products...</p> */}
           {status === 'failed' && <p>Error: {error}</p>}
           {status === 'succeeded' && filtered.length === 0 && (
             <p>No products found matching your criteria.</p>

@@ -31,7 +31,7 @@ const Header = () => {
         <div className="container">
           <NavLink className="navbar-brand fw-bold text-black" to="/">
             <img
-              src="https://static-assets-web.flixcart.com/batman-returns/batman-returns/p/images/fkheaderlogo_exploreplus-44005d.svg"
+              src="https://www.powerlook.in/images/Logo/pl-logo.png?aio=w-200"
               alt="Logo"
               className="me-2"
             />

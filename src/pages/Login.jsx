@@ -1,5 +1,4 @@
 import { useForm } from 'react-hook-form';
-import users from '../data/data.json';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
@@ -14,14 +13,10 @@ const Login = () => {
   } = useForm({ mode: 'onChange' });
 
   const onSubmit = (data) => {
-  const user = users.find(
-    (u) => u.email === data.email && u.password === data.password
-  );
-
-  if (user) {
+    // Allow anyone to log in without checking credentials
     const token = 'mock_token';
 
-    login(token, { email: user.email });
+    login(token, { email: data.email });
 
     const toastEl = document.getElementById('loginToast');
     if (toastEl) {
@@ -30,14 +25,11 @@ const Login = () => {
     }
 
     navigate('/');
-  } else {
-    alert('Invalid email or password');
-  }
-};
+  };
+
   return (
     <div className="container-fluid min-vh-100 d-flex align-items-center justify-content-center bg-light">
       <div className="row shadow rounded overflow-hidden bg-white" style={{ maxWidth: '900px', width: '100%' }}>
-
         <div className="col-md-6 d-none d-md-flex align-items-center justify-content-center p-0">
           <img
             src="https://static.wixstatic.com/media/88d39f_80645d58ead343a590b0fe7ef6df6b89~mv2.gif"
@@ -50,7 +42,6 @@ const Login = () => {
         <div className="col-md-6 p-5">
           <h3 className="mb-4 text-center fw-bold">Login to Your Store</h3>
           <form onSubmit={handleSubmit(onSubmit)} noValidate>
-
             <div className="mb-3">
               <label htmlFor="email" className="form-label">Email address</label>
               <input
@@ -77,11 +68,7 @@ const Login = () => {
                   className={`form-control ${errors.password ? 'is-invalid' : ''}`}
                   {...register('password', {
                     required: 'Password is required',
-                    minLength: { value: 6, message: 'Min 6 characters' },
-                    pattern: {
-                      value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&]).{6,}$/,
-                      message: 'Must include uppercase, lowercase, number, and symbol',
-                    },
+                    minLength: { value: 3, message: 'Min 3 characters' },
                   })}
                 />
                 <span className="input-group-text bg-white">

@@ -5,7 +5,6 @@ import ProductContext from '../context/ProductContext';
 import ProductsForYou from './ProductYou';
 import ProductCategories from './ProductCategory';
 import ProductCard from '../components/ProductCard';
-import SimilarProductsYouLike from './SimilarProduct';
 
 const Home = () => {
   const { state, dispatch } = useContext(ProductContext);
