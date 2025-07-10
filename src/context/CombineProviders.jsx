@@ -1,5 +1,5 @@
 
-import { AuthProvider } from './AuthContext';
+
 import { CartProvider } from './CartContext';
 import { EditModeProvider } from './EditModeContext';
 import { PaymentProvider } from './PaymentContext';
@@ -7,7 +7,6 @@ import { ProductProvider } from './ProductContext';
 import { SearchProvider } from './SearchContext';
 
 const providers = [
-  AuthProvider,
   SearchProvider,
   ProductProvider,
   EditModeProvider,

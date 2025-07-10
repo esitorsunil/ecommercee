@@ -1,10 +1,17 @@
+// src/pages/Login.jsx
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useDispatch } from 'react-redux';
+import { login } from '../Redux/authSlice';
+import { useState } from 'react';
 
 const Login = () => {
   const navigate = useNavigate();
-  const { rememberMe, setRememberMe, showPassword, setShowPassword, login } = useAuth();
+  const dispatch = useDispatch();
+
+  // Replacing context values with local component state
+  const [rememberMe, setRememberMe] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
@@ -13,10 +20,11 @@ const Login = () => {
   } = useForm({ mode: 'onChange' });
 
   const onSubmit = (data) => {
-    // Allow anyone to log in without checking credentials
+    // In a real app, validate credentials with backend
     const token = 'mock_token';
 
-    login(token, { email: data.email });
+    // Dispatch login to Redux
+    dispatch(login({ token, user: { email: data.email } }));
 
     const toastEl = document.getElementById('loginToast');
     if (toastEl) {

@@ -1,46 +1,55 @@
 import { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
-import { useAuth } from '../context/AuthContext';
-import { useEditMode } from '../context/EditModeContext';
-
-const PROFILE_STORAGE_KEY = 'userProfile';
+import { useDispatch, useSelector } from 'react-redux';
+import { setProfile } from '../Redux/profileSlice';
+import { toggleEditMode, resetEditMode } from '../Redux/editmodeSlice';
 
 const Profile = () => {
-  const { register, handleSubmit, reset, formState: { errors } } = useForm();
-  const { isAuthenticated } = useAuth();
-  const { editMode, toggleEditMode, resetEditMode } = useEditMode(); 
-  const toastRef = useRef();
+ const dispatch = useDispatch();
+const toastRef = useRef();
 
-  useEffect(() => {
-    const savedProfile = localStorage.getItem(PROFILE_STORAGE_KEY);
-    if (savedProfile) {
-      const profileData = JSON.parse(savedProfile);
-      reset(profileData);
-    }
-  }, [reset]);
+const { register, handleSubmit, reset, formState: { errors } } = useForm();
+
+const authToken = useSelector((state) => state.auth.authToken);
+const user = useSelector((state) => state.auth.user); // ✅ ADDED
+const isAuthenticated = !!authToken;
+
+const editMode = useSelector((state) => state.editMode.value);
+const profiles = useSelector((state) => state.profile.profiles);
+const profile = user && user.email && profiles[user.email] ? profiles[user.email] : null;
+const isLoading = useSelector((state) => state.auth.isLoading);
+
+useEffect(() => {
+  if (user?.email && profiles[user.email]) {
+    reset(profiles[user.email]);
+  }
+}, [user, profiles, reset]);
 
   const showToast = () => {
     const toast = new window.bootstrap.Toast(toastRef.current);
     toast.show();
   };
 
+ 
   const onSubmit = (data) => {
-    localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(data));
-    showToast();
-    resetEditMode();
+    if (user?.email) {
+      dispatch(setProfile({ email: user.email, data }));
+      showToast();
+      dispatch(resetEditMode());
+    }
   };
 
   const handleEditToggle = () => {
-    if (editMode) {
-      const savedProfile = localStorage.getItem(PROFILE_STORAGE_KEY);
-      if (savedProfile) {
-        reset(JSON.parse(savedProfile));
-      }
-    }
-    toggleEditMode();
+    reset(profile); // reset to last saved profile
+    dispatch(toggleEditMode());
   };
 
+  if (isLoading) {
+  return <div className="text-center py-5">Loading profile...</div>;
+}
+
   return (
+    
     <div className="container py-5">
       <div className="d-flex justify-content-center">
         <div className="bg-white shadow-lg rounded p-4 w-100" style={{ maxWidth: '600px' }}>
@@ -198,6 +207,7 @@ const Profile = () => {
           </div>
         </div>
       </div>
+
       <div
         className="position-fixed"
         style={{

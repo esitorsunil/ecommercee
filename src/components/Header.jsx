@@ -1,23 +1,28 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
 import { useSearch } from '../context/SearchContext';
 import { useCart } from '../context/CartContext';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout } from '../Redux/authSlice'; // import your logout action
+import { resetEditMode } from '../Redux/editmodeSlice';
+
 
 const Header = () => {
-  const { isAuthenticated, logout } = useAuth();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const authToken = useSelector((state) => state.auth.authToken);
+  const isAuthenticated = !!authToken;
   const wishlist = useSelector((state) => state.wishlist);
 
-  const { state, dispatch } = useSearch();
+  const { state, dispatch: searchDispatch } = useSearch();
   const { products, query, showDropdown } = state;
-
   const { cart } = useCart();
 
   const totalItems = cart.items.reduce((sum, item) => sum + item.quantity, 0);
 
   const handleLogout = () => {
-    logout();
+ dispatch(logout());
+dispatch(resetEditMode()); // 👈 this line;
+
     navigate('/login');
   };
 
@@ -37,12 +42,7 @@ const Header = () => {
             />
           </NavLink>
 
-          <button
-            className="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarNav"
-          >
+          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span className="navbar-toggler-icon"></span>
           </button>
 
@@ -55,7 +55,7 @@ const Header = () => {
                     <NavLink
                       to={path}
                       className={({ isActive }) =>
-                        `nav-link px-3 ${isActive ? 'border-bottom border-2 border-dark ' : ''}`
+                        `nav-link px-3 ${isActive ? 'border-bottom border-2 border-dark' : ''}`
                       }
                     >
                       {labels[i]}
@@ -65,16 +65,22 @@ const Header = () => {
               })}
             </ul>
           </div>
-          <div className="position-relative me-5" onClick={() => navigate('/wishlist')} style={{ cursor: 'pointer' }}>
- <i class="bi bi-bookmark-heart fs-5"></i>
-  {wishlist.length > 0 && (
-    <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-      {wishlist.length}
-    </span>
-  )}
-</div>
+
+          <div
+            className="position-relative me-5"
+            onClick={() => navigate('/wishlist')}
+            style={{ cursor: 'pointer' }}
+          >
+            <i className="bi bi-bookmark-heart fs-5"></i>
+            {wishlist.length > 0 && (
+              <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                {wishlist.length}
+              </span>
+            )}
+          </div>
 
           <div className="d-flex align-items-center gap-4">
+            {/* 🔍 Search */}
             <div className="position-relative" style={{ width: '300px' }}>
               <i
                 className="bi bi-search position-absolute text-muted"
@@ -86,11 +92,11 @@ const Header = () => {
                 placeholder="Search products..."
                 value={query}
                 onChange={(e) => {
-                  dispatch({ type: 'SET_QUERY', payload: e.target.value });
-                  dispatch({ type: 'SET_SHOW_DROPDOWN', payload: true });
+                  searchDispatch({ type: 'SET_QUERY', payload: e.target.value });
+                  searchDispatch({ type: 'SET_SHOW_DROPDOWN', payload: true });
                 }}
-                onFocus={() => dispatch({ type: 'SET_SHOW_DROPDOWN', payload: true })}
-                onBlur={() => setTimeout(() => dispatch({ type: 'SET_SHOW_DROPDOWN', payload: false }), 200)}
+                onFocus={() => searchDispatch({ type: 'SET_SHOW_DROPDOWN', payload: true })}
+                onBlur={() => setTimeout(() => searchDispatch({ type: 'SET_SHOW_DROPDOWN', payload: false }), 200)}
               />
               {showDropdown && query && (
                 <ul
@@ -103,7 +109,7 @@ const Header = () => {
                         key={item.id}
                         className="list-group-item list-group-item-action"
                         onClick={() => {
-                          dispatch({ type: 'RESET_QUERY' });
+                          searchDispatch({ type: 'RESET_QUERY' });
                           navigate(`/product/${item.id}`);
                         }}
                       >
@@ -117,6 +123,7 @@ const Header = () => {
               )}
             </div>
 
+            {/* 👤 Profile Dropdown */}
             <div className="dropdown">
               <button
                 className="btn btn-link text-black p-0 dropdown-toggle"
@@ -130,27 +137,20 @@ const Header = () => {
               <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
                 {isAuthenticated ? (
                   <>
+                    <li><Link className="dropdown-item" to="/profile">Profile</Link></li>
                     <li>
-                      <Link className="dropdown-item" to="/profile">Profile</Link>
-                    </li>
-                    <li>
-                      <button
-                        className="dropdown-item"
-                        data-bs-toggle="modal"
-                        data-bs-target="#logoutModal"
-                      >
+                      <button className="dropdown-item" data-bs-toggle="modal" data-bs-target="#logoutModal">
                         Logout
                       </button>
                     </li>
                   </>
                 ) : (
-                  <li>
-                    <Link className="dropdown-item" to="/login">Login</Link>
-                  </li>
+                  <li><Link className="dropdown-item" to="/login">Login</Link></li>
                 )}
               </ul>
             </div>
 
+            {/* 🛒 Cart */}
             <button
               className="btn btn-link text-black p-0 position-relative"
               onClick={() => {
@@ -173,36 +173,21 @@ const Header = () => {
         </div>
       </nav>
 
-      <div
-        className="modal fade"
-        id="logoutModal"
-        tabIndex="-1"
-        aria-labelledby="logoutModalLabel"
-        aria-hidden="true"
-      >
+      {/* 🔒 Logout Modal */}
+      <div className="modal fade" id="logoutModal" tabIndex="-1">
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title" id="logoutModalLabel">Confirm Logout</h5>
-              <button
-                type="button"
-                className="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
+              <h5 className="modal-title">Confirm Logout</h5>
+              <button className="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div className="modal-body">Are you sure you want to logout?</div>
             <div className="modal-footer">
-              <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">
-                Cancel
-              </button>
+              <button className="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
               <button
-                type="button"
                 className="btn btn-danger"
                 onClick={() => {
-                  const modalEl = document.getElementById('logoutModal');
-                  const modal = bootstrap.Modal.getInstance(modalEl);
-                  modal.hide();
+                  bootstrap.Modal.getInstance(document.getElementById('logoutModal')).hide();
                   handleLogout();
                 }}
               >
@@ -212,73 +197,28 @@ const Header = () => {
           </div>
         </div>
       </div>
- 
-      <div
-        className="modal fade"
-        id="loginPromptModal"
-        tabIndex="-1"
-        aria-labelledby="loginPromptModalLabel"
-        aria-hidden="true"
-      >
+
+      {/* 🔐 Login Prompt Modal */}
+      <div className="modal fade" id="loginPromptModal" tabIndex="-1">
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title" id="loginPromptModalLabel">Login Required</h5>
-              <button
-                type="button"
-                className="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
+              <h5 className="modal-title">Login Required</h5>
+              <button className="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div className="modal-body">
-              Please log in to view your cart.
-            </div>
+            <div className="modal-body">Please log in to view your cart.</div>
             <div className="modal-footer">
+              <button className="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
               <button
-                type="button"
-                className="btn btn-secondary"
-                data-bs-dismiss="modal"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
                 className="btn btn-primary"
                 onClick={() => {
-                  const modalEl = document.getElementById('loginPromptModal');
-                  const modal = bootstrap.Modal.getInstance(modalEl);
-                  modal.hide();
+                  bootstrap.Modal.getInstance(document.getElementById('loginPromptModal')).hide();
                   navigate('/login');
                 }}
               >
                 Login
               </button>
             </div>
-          </div>
-        </div>
-      </div>
-
-      <div
-        className="position-fixed top-0 start-50 translate-middle-x p-3"
-        style={{ zIndex: 1080 }}
-      >
-        <div
-          id="loginToast"
-          className="toast text-bg-success align-items-center border-0"
-          role="alert"
-          aria-live="assertive"
-          aria-atomic="true"
-          data-bs-delay="3000"
-        >
-          <div className="d-flex">
-            <div className="toast-body">Login successful!</div>
-            <button
-              type="button"
-              className="btn-close btn-close-white me-2 m-auto"
-              data-bs-dismiss="toast"
-              aria-label="Close"
-            ></button>
           </div>
         </div>
       </div>
